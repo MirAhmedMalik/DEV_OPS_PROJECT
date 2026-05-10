@@ -93,18 +93,34 @@ docker run -p 5000:5000 \
 
 ---
 
-## 📊 MLflow Dashboard
+## 📊 LLMOps: Continuous Evaluation & MLflow
 
-Every grading request automatically logs:
-- Subject name
-- Image filename
-- Score (0–100)
+Instead of training a model from scratch, this project uses an **LLMOps Pipeline** to continuously evaluate the Groq AI grading prompt against a version-controlled dataset.
 
+### 1. Data Version Control (DVC)
+Our evaluation dataset (`data/evaluation_dataset.csv`) contains historical student answers and grading rubrics. It is tracked using DVC to ensure reproducibility.
+```bash
+# Pull the latest dataset version
+dvc pull
+```
+
+### 2. Continuous Evaluation Pipeline
+Run the evaluation script to benchmark the prompt against the dataset:
+```bash
+python evaluate_prompt.py
+```
+This script:
+1. Iterates through the DVC dataset.
+2. Grades answers via the Groq API.
+3. Automatically logs latency, success rate, and the exact Prompt Template into the **MLflow Model Registry**.
+
+### 3. MLflow Dashboard
+Every request from both the live app and the evaluation script is logged.
 ```bash
 # Launch the MLflow UI
 mlflow ui
 
-# Open http://127.0.0.1:5000 (or :8080 if Flask is already running)
+# Open http://127.0.0.1:5000
 mlflow ui --port 8080
 ```
 
@@ -124,7 +140,10 @@ answer-sheet-validator/
 │   └── grader.py           # OCR + Groq grading pipeline
 ├── tests/
 │   └── test_grader.py      # Unit tests (fully mocked)
-├── data/answer_keys/       # Sample JSON answer keys
+├── data/
+│   ├── answer_keys/        # Sample JSON answer keys
+│   └── evaluation_dataset.csv # DVC-tracked dataset
+├── evaluate_prompt.py      # LLMOps Continuous Evaluation script
 ├── .github/workflows/      # GitHub Actions CI
 ├── .env.example            # Environment variable template
 ├── .gitignore
