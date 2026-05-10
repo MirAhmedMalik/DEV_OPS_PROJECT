@@ -46,10 +46,11 @@ COPY model/     ./model/
 COPY data/      ./data/
 
 # Create uploads directory (images are deleted after processing)
-RUN mkdir -p uploads
+RUN mkdir -p uploads mlruns
 
 # ── Security: run as non-root user ──────────────────────────────────────────
-RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser && \
+    chown -R appuser:appgroup /app
 USER appuser
 
 # Expose Flask port
