@@ -358,3 +358,30 @@ and other code quality issues. The CI pipeline fails if flake8 reports any error
 By default Docker containers run as root (administrator). If an attacker breaks
 into the container, they have full control. Running as a custom user 'appuser'
 limits the damage — they cannot modify system files.
+
+---
+
+## 10. How to Prove MLOps to a Strict Teacher (LLMOps)
+
+If a teacher asks: *"You didn't train a model, so is this really MLOps?"*
+
+You should say: *"We are doing **LLMOps (Large Language Model Operations)**. Training an LLM from scratch is too expensive. Instead, our MLOps pipeline focuses on Prompt Engineering and Evaluation."*
+
+Here is exactly how you prove it. Open your code and show them these two things:
+
+### 1. Data Version Control (DVC)
+*   **Show them:** `data/evaluation_dataset.csv` and the `.dvc` files in that folder.
+*   **Say:** *"In MLOps, you must version control data just like code. We use DVC to track our evaluation dataset. If the dataset changes, DVC hashes the new version, ensuring our evaluations are always reproducible."*
+
+### 2. Continuous Evaluation & MLflow Registry
+*   **Show them:** the `evaluate_prompt.py` script.
+*   **Say:** *"This is our Continuous Evaluation pipeline. Instead of a training script, this script tests our AI grading prompt against our version-controlled DVC dataset."*
+*   **Run it for them:** `python evaluate_prompt.py`
+*   **Show MLflow (`mlflow ui`):** *"Notice how MLflow tracks the exact 'Prompt Template' used, logs the latency and score for every record, and computes an average success rate. At the end, it registers the prompt configuration as an artifact in the MLflow Model Registry."*
+
+This proves that you have implemented the 4 pillars of MLOps:
+1. Version Control (Git)
+2. Data Version Control (DVC)
+3. Experiment Tracking (MLflow logging metrics)
+4. Model/Artifact Registry (MLflow storing the prompt template)
+
